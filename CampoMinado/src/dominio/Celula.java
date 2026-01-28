@@ -18,10 +18,15 @@ public abstract class Celula {
     public int[] getCoordenadas() {
         return coordenadas;
     }
-
-    public void setCoordenadas(int[] coordenadas) {
-        this.coordenadas = coordenadas;
+    
+    /*
+    public void setCoordenadas(int x, int y) {
+        int[] v = {x, y};
+        this.coordenadas = v;
     }
+
+    provavaelmente é desnecessário
+    */
 
     public boolean isRevelada() {
         return revelada;

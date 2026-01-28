@@ -1,0 +1,165 @@
+package dominio;
+
+public class Campo {
+    private int escolha;
+    private Celula[][] tabuleiro;
+    private int tamanho;
+    private int qntBombas;
+    private int totaldecasas;
+    private double percentual;
+    int[][] m;
+    
+    public Campo(int escolha){
+        this.escolha=escolha;
+
+        if(escolha==1){
+            tamanho = 5;
+            totaldecasas = tamanho*tamanho;
+            percentual = 0.10;
+            qntBombas = Math.max(1,(int)Math.ceil(totaldecasas*percentual)); 
+            //a linha acima exige que o num minimo de bombas seja 1, e arredonda o percentual*qntcasas para cima
+            //ex, se essa conta resultar em 0.5, o num de bombas sera = 1.
+            //ex2, 49 casas, 12% x 49 = 5.88, arredonda para 6 
+        }
+        if(escolha==2){
+            tamanho = 7;
+            totaldecasas = tamanho*tamanho;
+            percentual = 0.12;
+            qntBombas = Math.max(1,(int)Math.ceil(totaldecasas*percentual)); 
+        }
+        if(escolha==3){
+            tamanho = 8;
+            totaldecasas = tamanho*tamanho;
+            percentual = 0.14;
+            qntBombas = Math.max(1,(int)Math.ceil(totaldecasas*percentual)); 
+        }
+        if(escolha==4){
+            tamanho = 10;
+            totaldecasas = tamanho*tamanho;
+            percentual = 0.16;
+            qntBombas = Math.max(1,(int)Math.ceil(totaldecasas*percentual)); 
+        }
+    }
+    
+    public int getTamanho(){
+        return tamanho;
+    }
+    
+    public int getQntBombas(){
+        return qntBombas;
+    }
+    
+    public int getEscolha(){
+        return escolha;
+    }
+    
+    public double getPercentual(){
+        return percentual;
+    }
+    
+    public int getTotalDeCasas(){
+        return totaldecasas;
+    }
+    
+    
+    public void criarCampoAuxiliar(){
+        m = new int[tamanho][tamanho];
+        for(int i=0; i<tamanho; i++){       //percorre as posicoes
+            for(int j=0; j<tamanho; j++){
+                m[i][j] = 0;         //instancia a celula em cada posicao (matriz de celulas = tabuleiro)
+            }
+        }
+    }
+    
+    public void colocarBombas(){
+        int bombasColocadas = 0;
+        while(bombasColocadas < qntBombas){
+            int i = (int) (Math.random() * tamanho); 
+            int j = (int) (Math.random() * tamanho); 
+            
+            if (m[i][j] == 0) {
+                m[i][j] = 1;
+                bombasColocadas++;
+            }
+        }
+    }
+
+    //a partir daqui, a matriz auxiliar está pronta
+
+    
+    /*
+    Math.random = 0.0 a 1.0 (aleatoriamente) * tamanho e depois transforma para int
+    a linha acima mostra que uma posicao [i][j] esta sendo escolhida aleatoriamente
+    se o num sorteado for:
+    i =0.5 * 9(ex de tamanho) = 4.5 = 4
+    j = 0.3 * 9 = 2.7 = 2
+    posicao [4][2]
+    */
+    
+    
+    public void exibirCampoAuxiliar(){
+        for(int i=0; i<tamanho;i++){
+            for(int j=0; j<tamanho; j++){
+                System.out.print(m[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
+    
+    public void revelarCelulasAuxiliares(){
+        System.out.println("Tabuleiro [i][j]: ");
+        for(int i=0; i<tamanho; i++){
+            for(int j=0; j<tamanho; j++){
+                System.out.print("[" + String.format("%02d", i) +"] [" +
+                        String.format("%02d", j) + "]");
+            }
+        }
+    } 
+    
+    /*String format = monta strings formatadas
+    String.format("%02d", i) = %d(inteiro / 2=largura minima / 0= preenche com 0 a esquerda
+    ex = String.format("%02d", 3);   // "03"
+    ex2 = String.format("%02d", 12);  // "12"
+    */
+    
+    public void criarCampo() {
+        tabuleiro = new Celula[tamanho][tamanho];
+        for(int i=0; i<tamanho; i++){
+            for(int j=0; j<tamanho; j++){
+                if (m[i][j] == 0)
+                    tabuleiro[i][j] = new CelulaVazia();
+                else
+                    tabuleiro[i][j] = new Mina();
+            }
+        }
+    }
+    
+    public void calcularNumeros() {
+        for(int i=0; i<tamanho; i++){
+            for(int j=0; j<tamanho; j++){
+                if (tabuleiro[i][j] instanceof CelulaVazia) {
+                    int numero = 0;
+                    for (int x = i - 1; x <= i + 1; x++) {
+                        for (int y = j - 1; y <= j + 1; y++) {
+                            if (x >= 0 && x < tamanho && y >= 0 && y < tamanho
+                                && tabuleiro[x][y] instanceof Mina) {
+                                numero++;
+                            }
+                        }
+                    }
+                    ((CelulaVazia)tabuleiro[i][j]).setMinasAdjacentes(numero);
+                }
+            }
+        }
+    }
+     
+    public void gerarTabuleiro(){
+        criarCampoAuxiliar();
+        
+        colocarBombas();
+        
+        criarCampo();
+        
+        calcularNumeros();
+    }    
+}
