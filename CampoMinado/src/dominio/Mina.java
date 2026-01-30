@@ -9,6 +9,8 @@ public class Mina extends Celula{
     }
     
     public boolean revelar() {
+        revelada = true;
+        System.out.println("BOOM!!!");
         return true;
     }
 }

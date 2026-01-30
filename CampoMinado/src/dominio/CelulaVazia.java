@@ -16,6 +16,6 @@ public class CelulaVazia extends Celula{
     
     public boolean revelar() {
         revelada = true;
-        return true;
+        return false;
     }
 }
