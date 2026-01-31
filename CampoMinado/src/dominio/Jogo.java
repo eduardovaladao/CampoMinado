@@ -5,18 +5,18 @@ public class Jogo {
     private int id;
     private Campo campo;
     private Jogador jogador;
-    private Tempo temporizador;
+    private Tempo cronometro;
     private int pontuacao;
     private int dificuldade;
 
     public Jogo() {
     }
 
-    public Jogo(int id, Campo campo, Jogador jogador, Tempo temporizador, int pontuacao) {
+    public Jogo(int id, Campo campo, Jogador jogador, Tempo cronometro, int pontuacao) {
         this.id = id;
         this.campo = campo;
         this.jogador = jogador;
-        this.temporizador = temporizador;
+        this.cronometro = cronometro;
         this.pontuacao = pontuacao;
     }
 
@@ -25,7 +25,7 @@ public class Jogo {
         this.campo = new Campo(dificuldade);
         this.dificuldade = dificuldade;
         this.jogador = jogador;
-        this.temporizador = null;
+        this.cronometro = null;
         this.pontuacao = 0;
     }
 
@@ -53,12 +53,12 @@ public class Jogo {
         this.jogador = jogador;
     }
 
-    public Tempo getTemporizador() {
-        return temporizador;
+    public Tempo getCronometro() {
+        return cronometro;
     }
 
-    public void setTemporizador(Tempo temporizador) {
-        this.temporizador = temporizador;
+    public void setCronometro(Tempo cronometro) {
+        this.cronometro = cronometro;
     }
 
     public int getPontuacao() {
@@ -71,28 +71,28 @@ public class Jogo {
 
     @Override
     public String toString() {
-        return "Jogo{" + "id=" + id + ", campo=" + campo + ", jogador=" + jogador + ", temporizador=" + temporizador + ", pontuacao=" + pontuacao + ", dificuldade=" + dificuldade + '}';
+        return "Jogo{" + "id=" + id + ", campo=" + campo + ", jogador=" + jogador + ", cronometro=" + cronometro + ", pontuacao=" + pontuacao + ", dificuldade=" + dificuldade + '}';
     }
 
     public int verificarLance(int x, int y, int escolha) {
         int res = 0;
         switch (escolha) {
             case 1 -> {
-                if (!this.getCampo().getTabuleiro()[x][y].isRevelada()) {
-                    this.getCampo().getTabuleiro()[x][y].setRevelada(true);
+                if (!this.getCampo().getTabuleiro()[x][y].isRevelada()) { //se a celula nao foi revelada
+                    this.getCampo().getTabuleiro()[x][y].setRevelada(true) // this.getCampo().getTabuleiro()[x][y].revelar(); penso em mudar para manter o encapsulamento e nao alterar diretamente
 
                     if (this.getCampo().getTabuleiro()[x][y] instanceof CelulaVazia) {
-                        ((CelulaVazia) this.getCampo().getTabuleiro()[x][y]).revelar();
+                        ((CelulaVazia) this.getCampo().getTabuleiro()[x][y]).revelar(); //casting de celula para celulaVazia
                         res = 0;
                     } else {
-                        ((Mina) this.getCampo().getTabuleiro()[x][y]).revelar();
+                        ((Mina) this.getCampo().getTabuleiro()[x][y]).revelar(); //caso contrario, eh mina
                         res = 1;
                     }
                 }
             }
             case 2 -> {
                 if (!this.getCampo().getTabuleiro()[x][y].isMarcacao()) {
-                    this.getCampo().getTabuleiro()[x][y].setMarcacao(true);
+                    this.getCampo().getTabuleiro()[x][y].setMarcacao(true); //mesma susjestao
                     res = 0;
                 }
             }  
@@ -128,4 +128,7 @@ public class Jogo {
         }
         return res;
     }
+
+    
 }
+
