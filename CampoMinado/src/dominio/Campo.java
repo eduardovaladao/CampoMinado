@@ -85,8 +85,11 @@ public class Campo {
         while(bombasColocadas < qntBombas){
             int i = (int) (Math.random() * tamanho); 
             int j = (int) (Math.random() * tamanho); 
-            
-            if (m[i][j] == 0 && i != x && j != y) {
+
+            //na logica antiga, nao era permitido colocar bombas na linha e coluna do primeiro click, mas logica do jogo nao deve-se colocar bomba apenas na posicao [x][y] do click
+            //se m[i][j] == 0 (nao bomba) && NAO for i==x && j==y 
+            //poderia ser: if(m[i][j] == 0 && (i!=x || j!=y));
+            if (m[i][j] == 0 && !(i == x && j == y)) {
                 m[i][j] = 1;
                 bombasColocadas++;
             }
@@ -143,7 +146,7 @@ public class Campo {
         }
     }
     
-    public void calcularNumeros() {
+    public void calcularNumeros() { //nome melhor: calcularMinasAdjacentes / calcularMinasEmVolta
         for(int i=0; i<tamanho; i++){
             for(int j=0; j<tamanho; j++){
                 if (tabuleiro[i][j] instanceof CelulaVazia) {
@@ -151,7 +154,7 @@ public class Campo {
                     // linha superior do lado esquerdo até a linha inferior da coluna mais a direita
                     for (int x = i - 1; x <= i + 1; x++) {
                         for (int y = j - 1; y <= j + 1; y++) {
-                            if (x >= 0 && x < tamanho && y >= 0 && y < tamanho // condicaod e posicao dentro do tabuleiro
+                            if (x >= 0 && x < tamanho && y >= 0 && y < tamanho // condicao de posicao dentro do tabuleiro
                                 && tabuleiro[x][y] instanceof Mina) { // se for mina, o numero da cellua mapeada em questão aumenta
                                 numero++;
                             }
@@ -169,17 +172,21 @@ public class Campo {
     }
     
     public void abrirEmCascata(int x, int y) {
-        Celula c = this.tabuleiro[x][y];
-        
-        if (x >= 0 && x < tamanho && y >= 0 && y < tamanho) {
+        //estava aqui
+        if (x >= 0 && x < tamanho && y >= 0 && y < tamanho) { //validacao da posicao inicial (garante que x e y existem na matriz)
+            Celula c = this.tabuleiro[x][y]; //troquei de lugar, agora so pega-se a posicao atual do tabuleiro, se for uma posicao valida
             
-            c.revelar();
+            c.revelar(); //revela a celula atual uma vez
             
-            for (int i = x - 1; i <= x + 1; i++) {
+            for (int i = x - 1; i <= x + 1; i++) { //percorre os vizinhos (cima, baixo, esquerda, direita e diagonais)
                 for (int j = y - 1; j <= y + 1; j++) {
-                    if (!this.tabuleiro[i][j].isRevelada() && !this.tabuleiro[i][j].isMarcacao()
+                    
+                    if (i >= 0 &&i < tamanho && j >= 0 && j < tamanho){ //validando as celulas vizinhas - sempre que i e j estao dentro da matriz/tabuleiro
+                        
+                        if (!this.tabuleiro[i][j].isRevelada() && !this.tabuleiro[i][j].isMarcacao() //nao foi revelada, nao esta marcada, nao e mina e trem 0 minas adijacentes
                             && !(this.tabuleiro[i][j] instanceof Mina) && ((CelulaVazia)this.tabuleiro[i][j]).minasAdjacentes() == 0) {
-                        abrirEmCascata(i, j);
+                            abrirEmCascata(i,j); //chamada recursiva (espalha a abertura, apenas para celulas com num==0, as minas sao bloqueadas)
+                        }
                     }
                 }
             }
@@ -198,3 +205,4 @@ public class Campo {
         abrirEmCascata(x, y);
     }    
 }
+
