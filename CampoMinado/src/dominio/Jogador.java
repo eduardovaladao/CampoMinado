@@ -1,5 +1,6 @@
 package dominio;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Jogador {
@@ -12,7 +13,7 @@ public class Jogador {
         this.id = id;
         this.apelido = apelido;
         this.senha = senha;
-        this.jogos = new List<>(); //criando lista//
+        this.jogos = new ArrayList<>(); //criando lista//
     }
 
     public int getId(){ 

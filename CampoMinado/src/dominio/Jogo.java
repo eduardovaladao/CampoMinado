@@ -11,19 +11,11 @@ public class Jogo {
     public Jogo() {
     }
 
-    public Jogo(int id, Campo campo, Jogador jogador, Tempo cronometro, int pontuacao) {
-        this.id = id;
-        this.campo = campo;
-        this.jogador = jogador;
-        this.pontuacao = pontuacao;
-    }
-
     public Jogo(int id, Campo campo, Jogador jogador, int dificuldade) {
         this.id = id;
         this.campo = new Campo(dificuldade);
         this.dificuldade = dificuldade;
         this.jogador = jogador;
-        this.cronometro = null;
         this.pontuacao = 0;
     }
 
@@ -51,14 +43,6 @@ public class Jogo {
         this.jogador = jogador;
     }
 
-    public Tempo getCronometro() {
-        return cronometro;
-    }
-
-    public void setCronometro(Tempo cronometro) {
-        this.cronometro = cronometro;
-    }
-
     public int getPontuacao() {
         return pontuacao;
     }
@@ -69,7 +53,7 @@ public class Jogo {
 
     @Override
     public String toString() {
-        return "Jogo{" + "id=" + id + ", campo=" + campo + ", jogador=" + jogador + ", cronometro=" + cronometro + ", pontuacao=" + pontuacao + ", dificuldade=" + dificuldade + '}';
+        return "Jogo{" + "id=" + id + ", campo=" + campo + ", jogador=" + jogador + ", pontuacao=" + pontuacao + ", dificuldade=" + dificuldade + '}';
     }
 
     public int verificarLance(int x, int y, int escolha) {
