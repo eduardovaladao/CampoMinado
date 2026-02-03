@@ -3,9 +3,10 @@ package dominio;
 
 public abstract class Celula {
     protected int id;
-    protected int[] coordenadas;
     protected boolean revelada;
     protected boolean marcacao;
+    //protected boolean temBomba;
+    // provavelmente essa será a maior alteração até agora
 
     public int getId() {
         return id;
@@ -14,20 +15,7 @@ public abstract class Celula {
     public void setId(int id) {
         this.id = id;
     }
-
-    public int[] getCoordenadas() {
-        return coordenadas;
-    }
     
-    /*
-    public void setCoordenadas(int x, int y) {
-        int[] v = {x, y};
-        this.coordenadas = v;
-    }
-
-    provavaelmente é desnecessário
-    */
-
     public boolean isRevelada() {
         return revelada;
     }
@@ -46,8 +34,9 @@ public abstract class Celula {
 
     @Override
     public String toString() {
-        return "Celula{" + "id=" + id + ", coordenadas=" + coordenadas + ", revelada=" + revelada + ", marcacao=" + marcacao + '}';
+        return "Celula{" + "id=" + id + ", revelada=" + revelada + ", marcacao=" + marcacao + '}';
     }
     
     public abstract boolean revelar();
 }
+
