@@ -5,7 +5,6 @@ public class Jogo {
     private int id;
     private Campo campo;
     private Jogador jogador;
-    private Tempo cronometro;
     private int pontuacao;
     private int dificuldade;
 
@@ -16,7 +15,6 @@ public class Jogo {
         this.id = id;
         this.campo = campo;
         this.jogador = jogador;
-        this.cronometro = cronometro;
         this.pontuacao = pontuacao;
     }
 
@@ -79,7 +77,7 @@ public class Jogo {
         switch (escolha) {
             case 1 -> {
                 if (!this.getCampo().getTabuleiro()[x][y].isRevelada()) { //se a celula nao foi revelada
-                    this.getCampo().getTabuleiro()[x][y].setRevelada(true) // this.getCampo().getTabuleiro()[x][y].revelar(); penso em mudar para manter o encapsulamento e nao alterar diretamente
+                    this.getCampo().getTabuleiro()[x][y].setRevelada(true); // this.getCampo().getTabuleiro()[x][y].revelar(); penso em mudar para manter o encapsulamento e nao alterar diretamente
 
                     if (this.getCampo().getTabuleiro()[x][y] instanceof CelulaVazia) {
                         ((CelulaVazia) this.getCampo().getTabuleiro()[x][y]).revelar(); //casting de celula para celulaVazia

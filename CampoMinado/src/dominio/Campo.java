@@ -7,6 +7,7 @@ public class Campo {
     private int qntBombas;
     private int totaldecasas;
     private double percentual;
+    
     int[][] m; // matriz auxiliar
     
     public Campo(int escolha){
