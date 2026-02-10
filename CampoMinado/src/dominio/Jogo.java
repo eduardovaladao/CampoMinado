@@ -56,30 +56,25 @@ public class Jogo {
         return "Jogo{" + "id=" + id + ", campo=" + campo + ", jogador=" + jogador + ", pontuacao=" + pontuacao + ", dificuldade=" + dificuldade + '}';
     }
 
-    public int verificarLance(int x, int y, int escolha) {
+    public int lance(int x, int y, int escolha) {
         int res = 0;
         switch (escolha) {
             case 1 -> {
                 if (!this.getCampo().getTabuleiro()[x][y].isRevelada()) { //se a celula nao foi revelada
-                    this.getCampo().getTabuleiro()[x][y].setRevelada(true); // this.getCampo().getTabuleiro()[x][y].revelar(); penso em mudar para manter o encapsulamento e nao alterar diretamente
-
-                    if (this.getCampo().getTabuleiro()[x][y] instanceof CelulaVazia) {
-                        ((CelulaVazia) this.getCampo().getTabuleiro()[x][y]).revelar(); //casting de celula para celulaVazia
-                        res = 0;
-                    } else {
-                        ((Mina) this.getCampo().getTabuleiro()[x][y]).revelar(); //caso contrario, eh mina
+                    this.getCampo().getTabuleiro()[x][y].revelar();
+                    
+                    if (this.getCampo().getTabuleiro()[x][y].temBomba()) {
                         res = 1;
                     }
                 }
             }
             case 2 -> {
-                if (!this.getCampo().getTabuleiro()[x][y].isMarcacao()) {
-                    this.getCampo().getTabuleiro()[x][y].setMarcacao(true); //mesma susjestao
-                    res = 0;
+                if (!this.getCampo().getTabuleiro()[x][y].estaMarcada()) {
+                    this.getCampo().getTabuleiro()[x][y].setMarcacao(true);
                 }
             }  
         }
-        return res;
+        return res; // retorna 1 se revelar e tiver bomba
     }
     
     public boolean condicaoDeVitoria(int condicao) {
@@ -97,7 +92,7 @@ public class Jogo {
             
             for (int i = 0; i < tamanho; i++) {
                 for (int j = 0; j < tamanho; j++) {
-                    if (this.getCampo().getTabuleiro()[i][j] instanceof CelulaVazia && this.getCampo().getTabuleiro()[i][j].isRevelada()) {
+                    if (!this.getCampo().getTabuleiro()[i][j].temBomba() && this.getCampo().getTabuleiro()[i][j].isRevelada()) {
                         soma++;
                     }
                 }

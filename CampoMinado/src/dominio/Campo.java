@@ -7,9 +7,7 @@ public class Campo {
     private int qntBombas;
     private int totaldecasas;
     private double percentual;
-    
-    int[][] m; // matriz auxiliar
-    
+        
     public Campo(int escolha){
         this.escolha=escolha;
 
@@ -70,15 +68,8 @@ public class Campo {
         this.tabuleiro = tabuleiro;
     }
     
-    
-    
-    public void criarCampoAuxiliar(){
-        m = new int[tamanho][tamanho];
-        for(int i=0; i<tamanho; i++){       //percorre as posicoes
-            for(int j=0; j<tamanho; j++){
-                m[i][j] = 0;         //instancia a celula em cada posicao (matriz de celulas = tabuleiro)
-            }
-        }
+    public boolean condicaoDeExistencia(int x, int y) { // é bem auto explicativo
+        return x >= 0 && x < tamanho && y >= 0 && y < tamanho;
     }
     
     public void colocarBombas(int x, int y){ // x e y são o quadrado em branco do inicio
@@ -89,16 +80,13 @@ public class Campo {
 
             //na logica antiga, nao era permitido colocar bombas na linha e coluna do primeiro click, mas logica do jogo nao deve-se colocar bomba apenas na posicao [x][y] do click
             //se m[i][j] == 0 (nao bomba) && NAO for i==x && j==y 
-            //poderia ser: if(m[i][j] == 0 && (i!=x || j!=y));
-            if (m[i][j] == 0 && !(i == x && j == y)) {
-                m[i][j] = 1;
+            
+            if (!tabuleiro[i][j].temBomba() && (i!=x || j!=y)) {
+                tabuleiro[i][j].setBomba(true);
                 bombasColocadas++;
             }
         }
     }
-
-    //a partir daqui, a matriz auxiliar está pronta
-
     
     /*
     Math.random = 0.0 a 1.0 (aleatoriamente) * tamanho e depois transforma para int
@@ -110,16 +98,16 @@ public class Campo {
     */
     
     
-    public void exibirCampoAuxiliar(){
+    public void exibirCampo(){
         for(int i=0; i<tamanho;i++){
             for(int j=0; j<tamanho; j++){
-                System.out.print(m[i][j] + " ");
+                System.out.print(tabuleiro[i][j].getMinasAdjacentes() + " ");
             }
             System.out.println();
         }
     }
     
-    public void revelarCelulasAuxiliares(){
+    public void revelarCelulas(){
         System.out.println("Tabuleiro [i][j]: ");
         for(int i=0; i<tamanho; i++){
             for(int j=0; j<tamanho; j++){
@@ -137,12 +125,10 @@ public class Campo {
     
     public void criarCampo() {
         tabuleiro = new Celula[tamanho][tamanho];
+        int cont = 0; // id de cadacelula
         for(int i=0; i<tamanho; i++){
             for(int j=0; j<tamanho; j++){
-                if (m[i][j] == 0)
-                    tabuleiro[i][j] = new CelulaVazia();
-                else
-                    tabuleiro[i][j] = new Mina();
+                tabuleiro[i][j] = new Celula(cont++, false, false, false, 0);
             }
         }
     }
@@ -150,31 +136,27 @@ public class Campo {
     public void calcularNumeros() { //nome melhor: calcularMinasAdjacentes / calcularMinasEmVolta
         for(int i=0; i<tamanho; i++){
             for(int j=0; j<tamanho; j++){
-                if (tabuleiro[i][j] instanceof CelulaVazia) {
+                if (!tabuleiro[i][j].temBomba()) {
                     int numero = 0;
                     // linha superior do lado esquerdo até a linha inferior da coluna mais a direita
                     for (int x = i - 1; x <= i + 1; x++) {
                         for (int y = j - 1; y <= j + 1; y++) {
-                            if (x >= 0 && x < tamanho && y >= 0 && y < tamanho // condicao de posicao dentro do tabuleiro
-                                && tabuleiro[x][y] instanceof Mina) { // se for mina, o numero da cellua mapeada em questão aumenta
+                            if (condicaoDeExistencia(x, y) // condicao de posicao dentro do tabuleiro
+                                && !tabuleiro[x][y].temBomba()) { // se for mina, o numero da celula mapeada em questão aumenta
                                 numero++;
                             }
                         }
                     }
                     
-                    ((CelulaVazia) tabuleiro[i][j]).setMinasAdjacentes(numero);
+                    tabuleiro[i][j].setMinasAdjacentes(numero);
                 }
             }
         }
     }
     
-    public void primeiroClique(int x, int y) {
-        colocarBombas(x, y);
-    }
-    
     public void abrirEmCascata(int x, int y) {
         //estava aqui
-        if (x >= 0 && x < tamanho && y >= 0 && y < tamanho) { //validacao da posicao inicial (garante que x e y existem na matriz)
+        if (condicaoDeExistencia(x, y)) { //validacao da posicao inicial (garante que x e y existem na matriz)
             Celula c = this.tabuleiro[x][y]; //troquei de lugar, agora so pega-se a posicao atual do tabuleiro, se for uma posicao valida
             
             c.revelar(); //revela a celula atual uma vez
@@ -182,28 +164,16 @@ public class Campo {
             for (int i = x - 1; i <= x + 1; i++) { //percorre os vizinhos (cima, baixo, esquerda, direita e diagonais)
                 for (int j = y - 1; j <= y + 1; j++) {
                     
-                    if (i >= 0 &&i < tamanho && j >= 0 && j < tamanho){ //validando as celulas vizinhas - sempre que i e j estao dentro da matriz/tabuleiro
+                    if (condicaoDeExistencia(x, y)){ //validando as celulas vizinhas - sempre que i e j estao dentro da matriz/tabuleiro
                         
-                        if (!this.tabuleiro[i][j].isRevelada() && !this.tabuleiro[i][j].isMarcacao() //nao foi revelada, nao esta marcada, nao e mina e trem 0 minas adijacentes
-                            && !(this.tabuleiro[i][j] instanceof Mina) && ((CelulaVazia)this.tabuleiro[i][j]).minasAdjacentes() == 0) {
+                        if (!this.tabuleiro[i][j].isRevelada() && !this.tabuleiro[i][j].estaMarcada() //nao foi revelada, nao esta marcada, nao e mina e trem 0 minas adijacentes
+                            && !this.tabuleiro[i][j].temBomba() && this.tabuleiro[i][j].getMinasAdjacentes() == 0) {
                             abrirEmCascata(i,j); //chamada recursiva (espalha a abertura, apenas para celulas com num==0, as minas sao bloqueadas)
                         }
                     }
                 }
             }
         }
-    }
-     
-    public void gerarTabuleiro(int x, int y){
-        criarCampoAuxiliar();
-        
-        primeiroClique(x, y);
-        
-        criarCampo();
-        
-        calcularNumeros();
-        
-        abrirEmCascata(x, y);
-    }    
+    } 
 }
 
