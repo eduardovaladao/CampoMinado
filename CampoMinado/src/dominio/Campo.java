@@ -12,7 +12,7 @@ public class Campo {
         this.escolha=escolha;
 
         if(escolha==1){
-            tamanho = 5;
+            tamanho = 9;
             totaldecasas = tamanho*tamanho;
             percentual = 0.10;
             qntBombas = Math.max(1,(int)Math.ceil(totaldecasas*percentual)); 
@@ -21,19 +21,19 @@ public class Campo {
             //ex2, 49 casas, 12% x 49 = 5.88, arredonda para 6 
         }
         if(escolha==2){
-            tamanho = 7;
+            tamanho = 12;
             totaldecasas = tamanho*tamanho;
             percentual = 0.12;
             qntBombas = Math.max(1,(int)Math.ceil(totaldecasas*percentual)); 
         }
         if(escolha==3){
-            tamanho = 8;
+            tamanho = 15;
             totaldecasas = tamanho*tamanho;
             percentual = 0.14;
             qntBombas = Math.max(1,(int)Math.ceil(totaldecasas*percentual)); 
         }
         if(escolha==4){
-            tamanho = 10;
+            tamanho = 18;
             totaldecasas = tamanho*tamanho;
             percentual = 0.16;
             qntBombas = Math.max(1,(int)Math.ceil(totaldecasas*percentual)); 
@@ -133,47 +133,71 @@ public class Campo {
         }
     }
     
-    public void calcularNumeros() { //nome melhor: calcularMinasAdjacentes / calcularMinasEmVolta
+    public void calcularMinasAdjacentes() { 
         for(int i=0; i<tamanho; i++){
             for(int j=0; j<tamanho; j++){
                 if (!tabuleiro[i][j].temBomba()) {
                     int numero = 0;
                     // linha superior do lado esquerdo até a linha inferior da coluna mais a direita
+                    //
                     for (int x = i - 1; x <= i + 1; x++) {
                         for (int y = j - 1; y <= j + 1; y++) {
                             if (condicaoDeExistencia(x, y) // condicao de posicao dentro do tabuleiro
-                                && !tabuleiro[x][y].temBomba()) { // se for mina, o numero da celula mapeada em questão aumenta
-                                numero++;
+                                && tabuleiro[x][y].temBomba()) { // se for mina, o numero da celula mapeada em questão aumenta
+                                numero++; //num de minas
                             }
                         }
                     }
                     
-                    tabuleiro[i][j].setMinasAdjacentes(numero);
+                    tabuleiro[i][j].setMinasAdjacentes(numero); //passa a qnt de minas
                 }
             }
         }
     }
     
-    public void abrirEmCascata(int x, int y) {
+    public void abrir(int x, int y) {
         //estava aqui
-        if (condicaoDeExistencia(x, y)) { //validacao da posicao inicial (garante que x e y existem na matriz)
-            Celula c = this.tabuleiro[x][y]; //troquei de lugar, agora so pega-se a posicao atual do tabuleiro, se for uma posicao valida
+        if (!condicaoDeExistencia(x, y)) return; //validacao da posicao inicial (garante que x e y existem na matriz)
             
-            c.revelar(); //revela a celula atual uma vez
-            
-            for (int i = x - 1; i <= x + 1; i++) { //percorre os vizinhos (cima, baixo, esquerda, direita e diagonais)
-                for (int j = y - 1; j <= y + 1; j++) {
-                    
-                    if (condicaoDeExistencia(x, y)){ //validando as celulas vizinhas - sempre que i e j estao dentro da matriz/tabuleiro
-                        
-                        if (!this.tabuleiro[i][j].isRevelada() && !this.tabuleiro[i][j].estaMarcada() //nao foi revelada, nao esta marcada, nao e mina e trem 0 minas adijacentes
-                            && !this.tabuleiro[i][j].temBomba() && this.tabuleiro[i][j].getMinasAdjacentes() == 0) {
-                            abrirEmCascata(i,j); //chamada recursiva (espalha a abertura, apenas para celulas com num==0, as minas sao bloqueadas)
-                        }
-                    }
-                }
-            }
-        }
-    } 
-}
+        Celula c = this.tabuleiro[x][y]; //troquei de lugar, agora so pega-se a posicao atual do tabuleiro, se for uma posicao valida
 
+        if(c.isRevelada() || c.estaMarcada() || c.temBomba()) return; 
+        
+        this.tabuleiro[x][y].revelar(); //revela a celula atual uma vez
+        
+        //se a celula tiver minas adjacentes, para, revelando somente ela
+        //se a celula nao tiver minas adjacentes, continua o processo
+      
+        if(c.getMinasAdjacentes() == 0){
+            for(int i = x-1; i <= x+1; i++){
+                for(int j = y-1; j <= y+1; j++){
+                    if(condicaoDeExistencia(i, j))
+                        abrir(i, j); //chamada recursiva (espalha a abertura)
+                }        
+            }
+        }  
+    }
+    
+    /*logica da funcao acima
+    passa a posicao x e y do clique
+    verifica a condicao de existencia (se a posicao esta dentro da matriz)
+    cria uma celula c temporaria que armazena a posicao do clique
+    verifica que a celula esta revelada, marcada ou tem bomba, se sim, retorna
+    se nao, revela a posicao do clique
+    se nao tem mina adjacente -> entra nos for e verifica a condicao das celulas em volta, exemplo:
+    11 12 13
+    21 22 23
+    31 32 33
+    se o clique foi na casa 22, os for irao verificar todas as casas em torno daquela posicao
+    se tem minas adjacentes, apenas aquela casa sera revelada e encerra.
+    verifica se as posicoes testadas estao dentro do tabuleiro (condicao de existencia)
+    se atender a tudo, chama recursivamente a propria funcao
+    */
+    
+    public void revelarTodasAsBombas() {
+        for(int i=0; i<tamanho; i++)
+            for(int j=0; j<tamanho; j++)
+                if (this.tabuleiro[i][j].temBomba())
+                    this.tabuleiro[i][j].revelar(); // tá auto explicativo
+    }
+}

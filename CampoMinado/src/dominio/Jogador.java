@@ -8,6 +8,9 @@ public class Jogador {
     private String apelido;
     private String senha;
     private List<Jogo> jogos;
+    
+    public Jogador() {
+    }
 
     public Jogador(int id, String apelido, String senha) {
         this.id = id;

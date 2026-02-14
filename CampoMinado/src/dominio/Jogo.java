@@ -11,7 +11,7 @@ public class Jogo {
     public Jogo() {
     }
 
-    public Jogo(int id, Campo campo, Jogador jogador, int dificuldade) {
+    public Jogo(int id, Jogador jogador, int dificuldade) {
         this.id = id;
         this.campo = new Campo(dificuldade);
         this.dificuldade = dificuldade;
@@ -55,34 +55,40 @@ public class Jogo {
     public String toString() {
         return "Jogo{" + "id=" + id + ", campo=" + campo + ", jogador=" + jogador + ", pontuacao=" + pontuacao + ", dificuldade=" + dificuldade + '}';
     }
-
-    public int lance(int x, int y, int escolha) {
-        int res = 0;
+    
+    public void lance(int x, int y, int escolha) {
         switch (escolha) {
             case 1 -> {
-                if (!this.getCampo().getTabuleiro()[x][y].isRevelada()) { //se a celula nao foi revelada
-                    this.getCampo().getTabuleiro()[x][y].revelar();
-                    
-                    if (this.getCampo().getTabuleiro()[x][y].temBomba()) {
-                        res = 1;
-                    }
+                // se não tem bandeira
+                if (!this.getCampo().getTabuleiro()[x][y].estaMarcada()) {                
+                    this.getCampo().abrir(x, y); // revelar e por sorte em cascata
                 }
+                
+            } case 2 -> {
+                if (!this.getCampo().getTabuleiro()[x][y].estaMarcada()) // se a célula não está marcada
+                    this.getCampo().getTabuleiro()[x][y].setMarcacao(true); // marcar com bandeira
+                else 
+                    this.getCampo().getTabuleiro()[x][y].setMarcacao(false); // se não, desmarca
             }
-            case 2 -> {
-                if (!this.getCampo().getTabuleiro()[x][y].estaMarcada()) {
-                    this.getCampo().getTabuleiro()[x][y].setMarcacao(true);
-                }
-            }  
         }
-        return res; // retorna 1 se revelar e tiver bomba
+    }
+
+    public boolean verificarLance(int x, int y) {
+        boolean res = false;
+        
+        if (!this.getCampo().getTabuleiro()[x][y].isRevelada()                  
+            && this.getCampo().getTabuleiro()[x][y].temBomba())
+                res = true;
+        
+        return res; // retorna 1 se a célula escondida tiver bomba
     }
     
-    public boolean condicaoDeVitoria(int condicao) {
+    public boolean condicaoDeFinal(boolean condicao) {
         boolean res = false;
-        if (condicao == 1) {
+        if (condicao) {
             System.out.println("Fim de jogo!");
-            res = false;
-        } else if (condicao == 0) {
+            res = true;
+        } else if (!condicao) {
             
             int tamanho = this.getCampo().getTamanho();
             int bombas = this.getCampo().getQntBombas();
