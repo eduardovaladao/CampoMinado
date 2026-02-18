@@ -72,6 +72,7 @@ public class Jogo {
             }
         }
     }
+    
 
     public boolean verificarLance(int x, int y) {
         boolean res = false;

@@ -8,6 +8,7 @@ public class Jogador {
     private String apelido;
     private String senha;
     private List<Jogo> jogos;
+    private Recorde recorde;
     
     public Jogador() {
     }
@@ -26,7 +27,6 @@ public class Jogador {
     public void setId(int id) {
         this.id = id;
     }
-    
     
     public String getApelido(){ 
         return apelido; 
@@ -53,12 +53,13 @@ public class Jogador {
         return jogos;
     }
 
-    public int getPontuacaoTotal() {
-        int soma = 0;
-        for (int i = 0; i < jogos.size(); i++){   //pega a pontuação de cada jogo que o jogador já jogou, e soma tudo, ex: 10 + 30 + 25. Pontuação total = 65//
-            soma += jogos.get(i).getPontuacao();
-        }
-        return soma;
+    public Recorde getRecorde() {
+        return recorde;
     }
+
+    public void setRecorde(Recorde recorde) {
+        this.recorde = recorde;
+    }
+
 }
 
