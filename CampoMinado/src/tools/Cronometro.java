@@ -7,10 +7,11 @@ public class Cronometro {
     private boolean rodando; //indica se o cronometro esta ativo
     
     private Thread thread;   //executa algo em paralelo
-    private interfaceCronometro inter; //quem vai receber o tempo
+    //private interfaceCronometro inter; //quem vai receber o tempo
     
-    public Cronometro(interfaceCronometro inter){
-        this.inter = inter;
+    public Cronometro(){
+        this.rodando = false;
+        iniciar();
     }
     
     public boolean estaRodando(){
@@ -20,14 +21,14 @@ public class Cronometro {
     public void iniciar(){
         if(rodando) return;
         
-        if(rodando!=true){
+        if(!rodando){
             inicio = System.nanoTime(); //inicia o cronometro
             rodando = true;
         }
         
         thread = new Thread(() -> {
             while(rodando){
-                inter.aCadaSegundo(getTempoEmSegundos());
+                //inter.aCadaSegundo(getTempoEmSegundos()); // apaga esse trem
                 try {
                     Thread.sleep(1000);
                 }
@@ -45,7 +46,7 @@ public class Cronometro {
         
         fim = System.nanoTime();
         rodando = false;
-
+        thread.interrupt();
     }
     
     public long getTempoEmSegundos(){
