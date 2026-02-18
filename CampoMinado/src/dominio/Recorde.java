@@ -5,16 +5,15 @@ import java.io.Serializable;
 public class Recorde implements Serializable, Comparable<Recorde> {
 
     private String nomeJog;
-    private int tempo;
+    private long tempo;
 
-    public Recorde(String nome, int tempo) {
+    public Recorde(String nome, long tempo) {
         this.nomeJog = nome;
         this.tempo = tempo;
     }
-    
 
     public String getNome() { return nomeJog; }
-    public int getTempo() { return tempo; }
+    public long getTempo() { return tempo; }
 
     @Override
     public String toString() {
@@ -23,6 +22,6 @@ public class Recorde implements Serializable, Comparable<Recorde> {
 
     @Override
     public int compareTo(Recorde outro) {
-        return Integer.compare(this.tempo, outro.tempo);
+        return Long.compare(this.tempo, outro.tempo);
     }
 }

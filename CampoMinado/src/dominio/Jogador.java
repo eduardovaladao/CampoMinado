@@ -1,9 +1,10 @@
 package dominio;
 
+import java.io.Serializable; // import do serializable
 import java.util.ArrayList;
 import java.util.List;
 
-public class Jogador {
+public class Jogador implements Serializable {
     private int id;
     private String apelido;
     private String senha;

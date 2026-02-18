@@ -81,7 +81,7 @@ public class Jogo {
             && this.getCampo().getTabuleiro()[x][y].temBomba())
                 res = true;
         
-        return res; // retorna 1 se a célula escondida tiver bomba
+        return res; // retorna true se a célula escondida tiver bomba
     }
     
     public boolean condicaoDeFinal(boolean condicao) {
