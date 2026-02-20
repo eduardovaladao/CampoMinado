@@ -36,17 +36,17 @@ Exemplo de jogo:
 
 
 
-Tabuleiro \[9x9]
+        Tabuleiro \[9x9]
 
 
 
-Revelar: \[1]
+        Revelar: \[1]
 
-Marcar/desmarcar: \[2]
-
-Sair do jogo: \[-1]
-
-Dar lance: acao \[1, 2 ou -1]) e (coordenadas \[x, y]
+        Marcar/desmarcar: \[2]
+        
+        Sair do jogo: \[-1]
+        
+        Dar lance: acao \[1, 2 ou -1]) e (coordenadas \[x, y]
 
 
 
