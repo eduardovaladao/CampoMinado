@@ -64,6 +64,7 @@ public class Main {
                 }
             }
         }while(escolha!=4);
+        return;
     }
 
 
@@ -104,18 +105,26 @@ public class Main {
 
 
     public static void iniciarPartida(Jogador jogadorLogado) {
-        System.out.println("\n--- CONFIGURAR JOGO ---");
-        System.out.println("Selecione a dificuldade (1 a 4): ");
-        System.out.print("Digite um numero: ");
-
         int dificuldade = 8; // valor padrão
         try {
+            System.out.println("\n--- CONFIGURAR JOGO ---");
+            System.out.println("Selecione a dificuldade (1 a 4): ");
+            System.out.print("Digite um numero: ");
+            
             dificuldade = Integer.parseInt(s.nextLine());
+            
+            while (dificuldade < 1 || dificuldade > 4) {
+                System.out.println("\nInsira um novo valor valido\n");
+                System.out.println("Selecione a dificuldade (1 a 4): ");
+                System.out.print("Digite um numero: ");
+                
+                dificuldade = Integer.parseInt(s.nextLine());
+            }
         } catch(Exception e) {
-            System.out.println("Valor invalido, usando tamanho 8.");
+            System.out.println("Valor invalido!");
         }
 
-        Jogo jogo = new Jogo(1, jogadorLogado, dificuldade); // ver o id depois
+        Jogo jogo = new Jogo(jogadorLogado, dificuldade); // ver o id depois
         jogo.getCampo().criarCampo();
 
         int qntdDeLances = 0;
@@ -129,17 +138,23 @@ public class Main {
         do {
             exibirCampo(jogo.getCampo());
             System.out.println("\nTabuleiro [" + jogo.getCampo().getTamanho() + "x" + jogo.getCampo().getTamanho() + "]\n");
-            System.out.println("Revelar: [1]\nMarcar: [2]");
-            System.out.println("Dar lance: (coordenadas [x, y] e acao [1 ou 2])");
+            System.out.println("Revelar: [1]\nMarcar/desmarcar: [2]\nSair do jogo: [-1]");
+            System.out.println("Dar lance: (acao [1, 2 ou -1] e coordenadas [x e y])");
 
             try {
-                int x = (s.nextInt() - 1); // Linha
+                int acao = s.nextInt();  // 1, 2 ou -1
+                
+                if (acao == -1) {
+                    System.out.println("---\nFechando jogo...\n---"); // sair do jogo se precisar
+                    cronometro.parar();
+                    return;
+                }
+                
+                int x = (s.nextInt() - 1); // Linha                
                 int y = (s.nextInt() - 1); // Coluna
-
-                // esse " - 1 " é pra ajustar as variáveis x, y aos indexes do array
-
-                int acao = s.nextInt();  // 1 ou 2
                 s.nextLine();
+
+                // esse "x - 1", "y - 1" é pra ajustar as variáveis x, y aos indexes do array
                 
                 if (qntdDeLances == 0) {
                     jogo.getCampo().colocarBombas(x, y); // primeiro clique está seguro
@@ -150,7 +165,7 @@ public class Main {
                     condicao = jogo.condicaoDeFinal(jogo.verificarLance(x, y));
 
                     if (condicao) {
-                        System.out.println("BOOM! Voce acertou uma mina.");
+                        System.out.println("BOOM!!! Voce acertou uma mina!");
                         jogo.getCampo().revelarTodasAsBombas();
                         exibirCampo(jogo.getCampo());
                         venceu = false;
@@ -175,8 +190,6 @@ public class Main {
         if (venceu) {
             cronometro.parar();
             
-            Recorde temp = new Recorde(jogadorLogado.getApelido(), cronometro.getTempoEmSegundos()); // tempo do jogo
-
             System.out.println("\n--------------------------------");
             System.out.println("PARABENS! VOCE VENCEU!");
             System.out.println("Tempo total: " + cronometro.getTempoEmSegundos() + " segundos.");
@@ -186,33 +199,29 @@ public class Main {
             1 (ou < 0): O primeiro objeto é "menor" (mais rápido).
             0: Os tempos são iguais.
             1 (ou > 0): O primeiro objeto é "maior" (mais lento).
-            */    
-                /*1 = vit
-                0= derr
-                
-                     
-                1 jog bat temp pess E NAO bate top10
-                2 jog NAO bate temp pess E Bate top10
-                3 Jog NAO bate temp pess E NAO bate top10
-                4 jog bat temp pess E bate top10*/
-                        
-            try {
-                
-                if (verificaRecorde(temp.getTempo())){ // ve se o recorde dá pra entrar no ranking
-                    verificaRanking(temp);
-                }
-                
-                // se for a primeira vez OU bateu o tempo antigo, então...
-                if (jogadorLogado.getRecorde() == null || temp.compareTo(jogadorLogado.getRecorde()) < 0){ /* retorna -1 se o da equerda for menor que o da direita */
-                    //se o jogador bater o recorde pessoal
-                    System.out.println(">>> NOVO RECORDE PESSOAL! <<<");
-                    jogadorLogado.setRecorde(temp); // bota o recorde lá
-                    salvarDados();
-                }   
-                
+            */
+            if (jogo.getDificuldade()  == 4) {            
+                try {
+                    Recorde temp = new Recorde(jogadorLogado.getApelido(), cronometro.getTempoEmSegundos()); // tempo do jogo
 
-            } catch (Exception e) {
-                System.err.println(e.getMessage());
+                    if (verificaRecorde(temp.getTempo())){ // ve se o recorde dá pra entrar no ranking
+                        verificaRanking(temp);
+                    }
+
+                    // se for a primeira vez OU bateu o tempo antigo, então...
+                    if (jogadorLogado.getRecorde() == null || temp.compareTo(jogadorLogado.getRecorde()) < 0){ /* retorna -1 se o da equerda for menor que o da direita */
+                        //se o jogador bater o recorde pessoal
+                        System.out.println(">>> NOVO RECORDE PESSOAL! <<<");
+                        jogadorLogado.setRecorde(temp); // bota o recorde lá
+                        salvarDados();
+                    }   
+
+
+                } catch (Exception e) {
+                    System.err.println(e.getMessage());
+                }
+            } else {
+                System.out.println("--- Participe do Ranking vencendo jogos de dificuldade 4 ---");
             }
         } else {
             System.out.println("\nGAME OVER! Mais sorte na proxima.");
@@ -238,7 +247,6 @@ public class Main {
                 System.out.printf("%2d  ",i+1); // Número da linha
 
             for(int j=0; j<tamanho; j++){
-
                 if (!tabuleiro[i][j].isRevelada()) {
                     if (tabuleiro[i][j].estaMarcada()) {
                         System.out.print("P ");
