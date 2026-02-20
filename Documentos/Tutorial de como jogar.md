@@ -1,3 +1,7 @@
+Atenção: este arquivo tem a mesma função do READMI.md do repositório no GitHub.
+
+
+
 # Jogo de Campo Minado para Terminal
 
 
