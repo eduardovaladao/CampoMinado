@@ -12,7 +12,7 @@ public class Campo {
         this.escolha=escolha;
 
         if(escolha==1){
-            tamanho = 9;
+            tamanho = 4;
             totaldecasas = tamanho*tamanho;
             percentual = 0.10;
             qntBombas = Math.max(1,(int)Math.ceil(totaldecasas*percentual)); 
@@ -81,6 +81,10 @@ public class Campo {
             //na logica antiga, nao era permitido colocar bombas na linha e coluna do primeiro click, mas logica do jogo nao deve-se colocar bomba apenas na posicao [x][y] do click
             //se m[i][j] == 0 (nao bomba) && NAO for i==x && j==y 
             
+            
+            //o instanceof gatante que o jogo nao colocara uma bomba na celulaBonus
+            boolean bonus = tabuleiro[i][j] instanceof CelulaBonus;
+            
             if (!tabuleiro[i][j].temBomba() && (i!=x || j!=y)) {
                 tabuleiro[i][j].setBomba(true);
                 bombasColocadas++;
@@ -126,9 +130,17 @@ public class Campo {
     public void criarCampo() {
         tabuleiro = new Celula[tamanho][tamanho];
         int cont = 0; // id de cadacelula
+        
+        //coloca aleatoriamente a posicao de celula Bonus
+        int linhaBonus = (int) (Math.random() * tamanho);
+        int colunaBonus = (int) (Math.random() * tamanho);
+        
         for(int i=0; i<tamanho; i++){
             for(int j=0; j<tamanho; j++){
-                tabuleiro[i][j] = new Celula(cont++, false, false, false, 0);
+                if(i==linhaBonus && j==colunaBonus)
+                    tabuleiro[i][j]= new CelulaBonus(cont++, false, false, false, 0);
+                else 
+                    tabuleiro[i][j] = new Celula(cont++, false, false, false, 0);
             }
         }
     }
@@ -162,6 +174,16 @@ public class Campo {
         Celula c = this.tabuleiro[x][y]; //troquei de lugar, agora so pega-se a posicao atual do tabuleiro, se for uma posicao valida
 
         if(c.isRevelada() || c.estaMarcada() || c.temBomba()) return; 
+        
+        //dentro desse metodo, garantimos que mesmo se o jogador nao clicar diretamente no bonus (abrir em cascata) o bonus eh ativado
+        //se foi criado por CelulaBonus, entra no if
+        if(c instanceof CelulaBonus){
+            //casting de c para celulaBonus e chama o executarBonus
+            ((CelulaBonus) c).executarBonus(this.tabuleiro);
+        }
+        //funciona tanto se o jogador clicar na celulaBonus
+        //quanto se a celulaBonus for aberta em cascata
+        
         
         this.tabuleiro[x][y].revelar(); //revela a celula atual uma vez
         
