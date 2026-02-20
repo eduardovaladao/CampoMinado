@@ -12,7 +12,7 @@ public class Campo {
         this.escolha=escolha;
 
         if(escolha==1){
-            tamanho = 4;
+            tamanho = 9;
             totaldecasas = tamanho*tamanho;
             percentual = 0.10;
             qntBombas = Math.max(1,(int)Math.ceil(totaldecasas*percentual)); 

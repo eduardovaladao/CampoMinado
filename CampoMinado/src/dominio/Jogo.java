@@ -1,30 +1,17 @@
 package dominio;
 
 public class Jogo {
-
-    private int id;
     private Campo campo;
     private Jogador jogador;
-    private int pontuacao;
     private int dificuldade;
 
     public Jogo() {
     }
 
-    public Jogo(int id, Jogador jogador, int dificuldade) {
-        this.id = id;
+    public Jogo(Jogador jogador, int dificuldade) {
         this.campo = new Campo(dificuldade);
         this.dificuldade = dificuldade;
         this.jogador = jogador;
-        this.pontuacao = 0;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public Campo getCampo() {
@@ -43,17 +30,17 @@ public class Jogo {
         this.jogador = jogador;
     }
 
-    public int getPontuacao() {
-        return pontuacao;
+    public int getDificuldade() {
+        return dificuldade;
     }
 
-    public void setPontuacao(int pontuacao) {
-        this.pontuacao = pontuacao;
+    public void setDificuldade(int dificuldade) {
+        this.dificuldade = dificuldade;
     }
 
     @Override
     public String toString() {
-        return "Jogo{" + "id=" + id + ", campo=" + campo + ", jogador=" + jogador + ", pontuacao=" + pontuacao + ", dificuldade=" + dificuldade + '}';
+        return "Jogo{campo=" + campo + ", jogador=" + jogador + ", dificuldade=" + dificuldade + '}';
     }
     
     public void lance(int x, int y, int escolha) {
@@ -106,7 +93,7 @@ public class Jogo {
             }
             
             if (soma == total) {
-                System.out.println("Vitória");
+                System.out.println("VITORIA!!!");
                 res = true;
             }
         }

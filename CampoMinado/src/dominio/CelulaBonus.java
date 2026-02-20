@@ -2,7 +2,7 @@ package dominio;
 
 import java.io.Serializable;
 
-public class CelulaBonus extends Celula implements Serializable {
+public class CelulaBonus extends Celula {
 
     public CelulaBonus() {
         super();
@@ -19,10 +19,9 @@ public class CelulaBonus extends Celula implements Serializable {
             for (int j = 0; j < tabuleiro[i].length; j++) {// Se a célula tem bomba e o jogador ainda não a marcou
                 if (tabuleiro[i][j].temBomba() && !tabuleiro[i][j].estaMarcada()) {
                     tabuleiro[i][j].setMarcacao(true);
-                    System.out.println("\n[BÔNUS] Uma mina foi detectada e marcada para você em [" + (i+1) + "," + (j+1) + "]!");
+                    System.out.println("\n[BONUS] Uma mina foi detectada e marcada para voce em [" + (i+1) + "," + (j+1) + "]!");
                     return; // Encerra após marcar a primeira}}}
                 }
-                else System.out.println("\n[BÔNUS] Nenhuma bomba disponível para marcação.");
             }
         }
     }
