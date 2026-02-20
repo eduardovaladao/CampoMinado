@@ -405,7 +405,7 @@ public class Main {
 
         int posicao = 1;
         for(Recorde r : rankingTop10){
-            System.out.println(posicao + "º Lugar: " + r.getNome() + " - " + r.getTempo() + " segundos");
+            System.out.println(posicao + "o Lugar: " + r.getNome() + " - " + r.getTempo() + " segundos");
             posicao++;
         }
         System.out.println("---------------------------------");
@@ -424,3 +424,4 @@ public class Main {
         return false;
     }
 }
+
