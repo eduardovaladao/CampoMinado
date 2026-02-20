@@ -12,10 +12,12 @@ public class Main {
     static Scanner s = new Scanner(System.in);
     static ArrayList<Jogador> jogadores = new ArrayList<>();
     static ArrayList<Recorde> rankingTop10 = new ArrayList<>();
+
     
 
     static final String ArquivoBanco = "saves.dat"; //nome do arquivo onde tudo sera salvo
     static final String ArquivoRanking = "ranking.dat";
+
 
     public static void main(String args[]){
         carregarDados();
@@ -84,7 +86,6 @@ public class Main {
 
             switch (escolha) {
                 case 1 -> {
-                    // CORPO DO JOGO
                     iniciarPartida(j);
                 } case 2 -> {
                     try {
@@ -172,7 +173,6 @@ public class Main {
         } while (!condicao);
 
         if (venceu) {
-            //COLOCAR O CRONOMETRO!
             cronometro.parar();
             
             Recorde temp = new Recorde(jogadorLogado.getApelido(), cronometro.getTempoEmSegundos()); // tempo do jogo
@@ -182,24 +182,35 @@ public class Main {
             System.out.println("Tempo total: " + cronometro.getTempoEmSegundos() + " segundos.");
             System.out.println("--------------------------------\n");
             
-            // Salvar no ranking
-            if (rankingTop10.isEmpty()) {
-                rankingTop10.add(temp);
-                salvarRanking();
-                System.out.println("Primeiro a ser salvo no ranking!");
-            }
-
-            // 1. Tenta atualizar recorde pessoal
+            /*
+            1 (ou < 0): O primeiro objeto é "menor" (mais rápido).
+            0: Os tempos são iguais.
+            1 (ou > 0): O primeiro objeto é "maior" (mais lento).
+            */    
+                /*1 = vit
+                0= derr
+                
+                     
+                1 jog bat temp pess E NAO bate top10
+                2 jog NAO bate temp pess E Bate top10
+                3 Jog NAO bate temp pess E NAO bate top10
+                4 jog bat temp pess E bate top10*/
+                        
             try {
+                
+                if (verificaRecorde(temp.getTempo())){ // ve se o recorde dá pra entrar no ranking
+                    verificaRanking(temp);
+                }
+                
                 // se for a primeira vez OU bateu o tempo antigo, então...
-                if (jogadorLogado.getRecorde() == null || temp.compareTo(jogadorLogado.getRecorde()) < 0 /* retorna -1 se o da equerda for menor que o da direita */) {
+                if (jogadorLogado.getRecorde() == null || temp.compareTo(jogadorLogado.getRecorde()) < 0){ /* retorna -1 se o da equerda for menor que o da direita */
+                    //se o jogador bater o recorde pessoal
                     System.out.println(">>> NOVO RECORDE PESSOAL! <<<");
                     jogadorLogado.setRecorde(temp); // bota o recorde lá
                     salvarDados();
-                    
-                    if (verificaRecorde(jogadorLogado.getRecorde().getTempo())) // ve se o recorde dá pra entrar no ranking
-                        verificaRanking(jogadorLogado.getRecorde());
-                }
+                }   
+                
+
             } catch (Exception e) {
                 System.err.println(e.getMessage());
             }
@@ -212,14 +223,22 @@ public class Main {
         System.out.println();
         int tamanho = c.getTamanho();
         Celula[][] tabuleiro = c.getTabuleiro();
-
+        
+        //impressao dos indices das colunas
+        System.out.print("    ");
+        for(int y=0; y<tamanho; y++){
+            System.out.printf("%02d ", y+1);
+        }
+        
+        System.out.println();
         for(int i=0; i<tamanho; i++){
             if (i >= 0 && i < 9)
-                System.out.print("0" + (i+1) + "  "); // Número da linha com 0 à esquerda
+                System.out.printf("%02d  ", i+1); // Número da linha com 0 à esquerda
             else
-                System.out.print((i+1) + "  "); // Número da linha
+                System.out.printf("%2d  ",i+1); // Número da linha
 
             for(int j=0; j<tamanho; j++){
+
                 if (!tabuleiro[i][j].isRevelada()) {
                     if (tabuleiro[i][j].estaMarcada()) {
                         System.out.print("P ");
@@ -330,21 +349,25 @@ public class Main {
 
     public static void verificaRanking(Recorde novoRecorde){
         carregarRanking();
-
+        
         rankingTop10.add(novoRecorde);
-
         Collections.sort(rankingTop10);
+    
+        if (rankingTop10.size() > 10) {
 
-        //se a lista estiver com mais de 10 tempos, exclui 1
-        while(rankingTop10.size() > 10){
+            while (rankingTop10.size() > 10) {
             rankingTop10.remove(rankingTop10.size() - 1);
+            }
         }
 
-        if(rankingTop10.contains(novoRecorde)){
+        if (rankingTop10.contains(novoRecorde)) {
             System.out.println("Parabens! Voce entrou para o TOP10!");
             salvarRanking();
+        } else {
+            System.out.println("Seu tempo não foi suficiente para o Top 10 Global.");
         }
     }
+
 
     public static void salvarRanking(){
         try(ObjectOutputStream o = new ObjectOutputStream(new FileOutputStream(ArquivoRanking))){
@@ -354,33 +377,31 @@ public class Main {
             System.out.println("Erro ao salvar ranking: " + e.getMessage());
         }
     }
+    
+    
 
     public static void carregarRanking(){
-        File f = new File("ranking.dat");
+        File f = new File(ArquivoRanking);
         if(!f.exists()) {
-            System.err.println("Não tem ranking");
             return;
         }
 
         try(ObjectInputStream o = new ObjectInputStream(new FileInputStream(f))){
             rankingTop10 = (ArrayList<Recorde>) o.readObject();
-            System.out.println("Carregado!");
+            System.out.println("Ranking carregado!");
         } catch (Exception e){
             System.out.println("Erro ao carregar o ranking! " + e.getMessage());
         }
     }
     public static void top10(){
-        if(jogadores.isEmpty()){
+        carregarRanking(); //carrega antes de mostrar - garante que pegou o arquivo
+        
+        if(rankingTop10.isEmpty()){
             System.out.println("Nenhum recorde registrado ainda!");
             return;
         }
         System.out.println("---------------------------------");
         System.out.println("--- RANKING DE MELHORES TEMPOS ---");
-        
-        if (rankingTop10.isEmpty()) {
-            System.err.println("Ranking vazio, tentando carregar oa rquivo...");
-            carregarRanking();
-        }
 
         int posicao = 1;
         for(Recorde r : rankingTop10){
@@ -399,7 +420,6 @@ public class Main {
             if (tempo < r.getTempo()){
                 return true; //verdadeiro, o tempo esta dentro do top 10
             }
-            else return false;
         }
         return false;
     }
