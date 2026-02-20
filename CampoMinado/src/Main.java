@@ -180,7 +180,14 @@ public class Main {
             System.out.println("\n--------------------------------");
             System.out.println("PARABENS! VOCE VENCEU!");
             System.out.println("Tempo total: " + cronometro.getTempoEmSegundos() + " segundos.");
-            System.out.println("--------------------------------\n");            
+            System.out.println("--------------------------------\n");
+            
+            // Salvar no ranking
+            if (rankingTop10.isEmpty()) {
+                rankingTop10.add(temp);
+                salvarRanking();
+                System.out.println("Primeiro a ser salvo no ranking!");
+            }
 
             // 1. Tenta atualizar recorde pessoal
             try {
@@ -321,10 +328,8 @@ public class Main {
 
     //RANKING TOP 10
 
-    public static void verificaRanking(Recorde recorde){
+    public static void verificaRanking(Recorde novoRecorde){
         carregarRanking();
-
-        Recorde novoRecorde = recorde;
 
         rankingTop10.add(novoRecorde);
 
@@ -332,7 +337,7 @@ public class Main {
 
         //se a lista estiver com mais de 10 tempos, exclui 1
         while(rankingTop10.size() > 10){
-            rankingTop10.remove(rankingTop10.size() -1);
+            rankingTop10.remove(rankingTop10.size() - 1);
         }
 
         if(rankingTop10.contains(novoRecorde)){
@@ -343,7 +348,8 @@ public class Main {
 
     public static void salvarRanking(){
         try(ObjectOutputStream o = new ObjectOutputStream(new FileOutputStream(ArquivoRanking))){
-            o.writeObject(rankingTop10);
+            System.out.println("Ranking salvo!");
+            o.writeObject(rankingTop10); // escreve num arraylist inteiro
         } catch (IOException e){
             System.out.println("Erro ao salvar ranking: " + e.getMessage());
         }
@@ -351,12 +357,16 @@ public class Main {
 
     public static void carregarRanking(){
         File f = new File("ranking.dat");
-        if(!f.exists()) return;
+        if(!f.exists()) {
+            System.err.println("Não tem ranking");
+            return;
+        }
 
         try(ObjectInputStream o = new ObjectInputStream(new FileInputStream(f))){
             rankingTop10 = (ArrayList<Recorde>) o.readObject();
+            System.out.println("Carregado!");
         } catch (Exception e){
-            System.out.println("Erro ao carregar o ranking!");
+            System.out.println("Erro ao carregar o ranking! " + e.getMessage());
         }
     }
     public static void top10(){
@@ -366,6 +376,11 @@ public class Main {
         }
         System.out.println("---------------------------------");
         System.out.println("--- RANKING DE MELHORES TEMPOS ---");
+        
+        if (rankingTop10.isEmpty()) {
+            System.err.println("Ranking vazio, tentando carregar oa rquivo...");
+            carregarRanking();
+        }
 
         int posicao = 1;
         for(Recorde r : rankingTop10){
@@ -376,8 +391,12 @@ public class Main {
     }
 
     public static boolean verificaRecorde(long tempo){
+        if (rankingTop10.size() < 10) {
+            return true;
+        }
+        
         for(Recorde r : rankingTop10){
-            if(tempo < r.getTempo()){
+            if (tempo < r.getTempo()){
                 return true; //verdadeiro, o tempo esta dentro do top 10
             }
             else return false;
