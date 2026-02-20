@@ -68,7 +68,7 @@ DAR LANCE:
 
 Lance digitado pelo usuário:
 
-1 1 4
+        1 1 4
 ---
 Significa: "Realize a ação de REVELAR na célula da LINHA 1 e da COLUNA 4"
 
@@ -78,10 +78,9 @@ Significa: "Realize a ação de REVELAR na célula da LINHA 1 e da COLUNA 4"
 
 Caso fosse:
 
-2 1 4 
+        2 1 4 
 
 ---
-
 Significa: "Realize a ação de MARCAR/DESMARCAR na célula da LINHA 1 e da COLUNA 4"
 
 ---
@@ -122,7 +121,7 @@ Antes de iniciar um jogo, crie ou faça o login de um usuário que ficará salvo
 
 
 
-
+---
 AGORA, boa sorte e bom divertimento! :)
 
 
