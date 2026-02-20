@@ -8,6 +8,7 @@
 
 O jogo simples do Campo Minado para jogar em terminal. Durante a execução, siga atentamente às instruções deixadas para uma experiência completa!
 
+Requisito: ter o Java instalado no computador.
 
 
 Exemplo de jogo:
